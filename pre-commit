@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Redirect output to stderr.
+exec 1>&2
+
+# Check for "nocommit" string in changed files.
+files_with_nocommit=$(git diff --cached --name-only --diff-filter=ACM | xargs grep -n -I -i "nocommit" 2>/dev/null | cut -d ':' -f 1,2 | uniq)
+
+if [ -n "$files_with_nocommit" ]; then
+  echo "ERROR: The following files contain 'nocommit':"
+  echo "$files_with_nocommit"
+  exit 1
+fi
